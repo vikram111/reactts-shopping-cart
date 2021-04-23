@@ -28,7 +28,7 @@ const getCartItems = (cartItems: CartItemType[]) => (
   cartItems.reduce((ack: number, item)=> ack + item.amount, 0)
 );
 
-const removeFromCart = (id: number) => null;
+
 
 function App() {
   const {data, isLoading, error} = useQuery<CartItemType[]>('products', getProducts)
@@ -43,6 +43,17 @@ function App() {
         return [...prev, {...clickedItem, amount: 1}]
       });
   }
+  const removeFromCart = (id: number) => {
+    setCartItems(prev => 
+      prev.reduce((ack, item) => {
+          if(item.id === id){
+            if(item.amount ===1 ) return ack;
+            return [...ack, {...item, amount: item.amount -1}];
+          }else{
+            return [...ack, item]
+          }
+      },[] as CartItemType[]))
+  };
   console.log(data)
   if(isLoading)
     return <LinearProgress/>
@@ -59,7 +70,6 @@ function App() {
       <StyledButton onClick = {() => setCartOpen(true)}>
         <Badge badgeContent = {getCartItems(cartItems)} color = 'error'>
           <AddShoppingCart/>
-
         </Badge>
 
       </StyledButton>
